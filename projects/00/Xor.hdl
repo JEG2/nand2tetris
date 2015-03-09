@@ -1,0 +1,28 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/00/Xor.hdl
+
+// This file is supplied for those who wish to play with the Xor.hdl implementation
+// described in the Hardware Simulator Tutorial.
+// There are more efficient ways to document and implement the Xor logic,
+// but this implementation provides a good HDL exercise. 
+
+/**
+ *  Exclusive-or gate:
+ *  out = 1 if ((a == 1 and b == 0) or ((a == 0 and b == 1))
+ *        0 otherwise
+ */
+
+CHIP Xor {
+
+    IN a, b;
+    OUT out;
+
+    PARTS:
+    Not (in=a, out=nota);
+    Not (in=b, out=notb);
+    And (a=a, b=notb, out=w1);
+    And (a=nota, b=b, out=w2);
+    Or  (a=w1, b=w2, out=out);
+}
