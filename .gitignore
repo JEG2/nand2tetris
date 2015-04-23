@@ -8,7 +8,8 @@ tools
 **/*.out
 **/*.hack
 
-projects/06
+projects/06/**/*.asm
+
 projects/07
 projects/08
 projects/09
