@@ -10,7 +10,9 @@ tools
 
 projects/06/**/*.asm
 
-projects/07
+projects/07/StackArithmetic
+projects/07/MemoryAccess
+
 projects/08
 projects/09
 projects/10
