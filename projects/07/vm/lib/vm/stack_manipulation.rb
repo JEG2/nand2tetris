@@ -7,47 +7,39 @@ module VM
       when "local"
         dispatch_to(runtime, options[:command], "LCL", options[:params][:index])
       when "static"
-        static = "#{runtime.file}.#{options[:params][:index]}"
-        runtime.send(options[:command], static)
+        dispatch_to(runtime, options[:command], "#{runtime.file}.#{options[:params][:index]}", 0)
       when "constant"
-        runtime.send(options[:command], options[:params][:index], as: "A")
+        if options[:command] == "push"
+          runtime.load_data(number: options[:params][:index])
+          runtime.push
+        else
+          fail "pop constant not supported"
+        end
       when "this"
         dispatch_to(runtime, options[:command], "THIS", options[:params][:index])
       when "that"
         dispatch_to(runtime, options[:command], "THAT", options[:params][:index])
       when "pointer"
-        dispatch_to_register(
-          runtime,
-          options[:command],
-          3 + options[:params][:index].to_i
-        )
+        dispatch_to(runtime, options[:command], "R3", options[:params][:index])
       when "temp"
-        dispatch_to_register(
-          runtime,
-          options[:command],
-          5 + options[:params][:index].to_i
-        )
+        dispatch_to(runtime, options[:command], "R5", options[:params][:index])
       end
     end
 
     private
 
     def dispatch_to(runtime, command, pointer, offset)
-      send("#{command}_to", runtime, pointer, offset)
+      send("#{command}_to", runtime, pointer, offset, pointer.start_with?("R") || pointer.include?("."))
     end
 
-    def push_to(runtime, pointer, offset)
-      runtime.read(pointer, offset, :value)
-      runtime.push(:value)
+    def push_to(runtime, pointer, offset, register)
+      runtime.read(pointer: pointer, offset: offset, register: register)
+      runtime.push
     end
 
-    def pop_to(runtime, pointer, offset)
-      runtime.pop(:value)
-      runtime.write(pointer, offset, :value)
-    end
-
-    def dispatch_to_register(runtime, command, number)
-      runtime.send(command, "R#{number}")
+    def pop_to(runtime, pointer, offset, register)
+      runtime.pop
+      runtime.write(pointer: pointer, offset: offset, register: register)
     end
   end
 end

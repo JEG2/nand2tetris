@@ -8,9 +8,8 @@ module VM
     private     :operator
 
     def write_to(runtime, options = { })
-      runtime.pop(:right)
-      operator.write_to(runtime, has_left: false)
-      runtime.push(:result)
+      runtime.pop(expression: "#{operator}D")
+      runtime.push
     end
   end
 end

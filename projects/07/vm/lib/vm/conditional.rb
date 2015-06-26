@@ -1,17 +1,16 @@
 module VM
   class Conditional
-    def initialize(test)
-      @test = test
+    def initialize(comparison)
+      @comparison = comparison
     end
 
-    attr_reader :test
-    private     :test
+    attr_reader :comparison
+    private     :comparison
 
     def write_to(runtime, options = { })
-      runtime.pop(:right)
-      runtime.pop(:left)
-      runtime.operation(:left, :-, :right, :condition)
-      runtime.jump(:condition, test)
+      runtime.pop
+      runtime.pop(expression: "M-D")
+      runtime.jump(comparison: comparison)
     end
   end
 end
