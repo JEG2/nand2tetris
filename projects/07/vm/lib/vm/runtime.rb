@@ -4,6 +4,7 @@ module VM
       @file             = file
       @hack             = ""
       @last_conditional = 0
+      @last_return      = 0
     end
 
     attr_reader :file
@@ -82,11 +83,40 @@ module VM
       END_HACK
     end
 
+    def create_label(name)
+      add_hack(<<-END_HACK)
+      (label:#{name})
+      END_HACK
+    end
+
     def to_s
       (hack + <<-END_HACK).gsub(/^\s+(\(?)/) { "#{'  ' if $1 != '('}#{$1}" }
       (END)
         @END
         0;JMP
+      END_HACK
+    end
+
+    def jump_to_label(variable, condition, label)
+      add_hack(<<-END_HACK)
+      @#{variable}
+      D=M
+      @label:#{label}
+      D;J#{condition}
+      END_HACK
+    end
+
+    def call_function()
+      @last_return += 1
+      add_hack(<<-END_HACK)
+      @return:#{@last_return}
+      D=A
+      @SP
+      M=M+1
+      A=M-1
+      M=D
+
+      (@return:#{@last_return})
       END_HACK
     end
 
