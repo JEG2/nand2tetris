@@ -11,21 +11,21 @@ module VM
     attr_reader :hack
     private     :hack
 
-    def pop(expression: "M")
-      add_hack(<<-END_HACK)
-      @SP
-      M=M-1
-      A=M
-      D=#{expression}
-      END_HACK
-    end
-
     def push
       add_hack(<<-END_HACK)
       @SP
       M=M+1
       A=M-1
       M=D
+      END_HACK
+    end
+
+    def pop(expression: "M")
+      add_hack(<<-END_HACK)
+      @SP
+      M=M-1
+      A=M
+      D=#{expression}
       END_HACK
     end
 
@@ -83,7 +83,7 @@ module VM
     end
 
     def to_s
-      (hack + <<-END_HACK).gsub(/^\s+/, "")
+      (hack + <<-END_HACK).gsub(/^\s+(\(?)/) { "#{'  ' if $1 != '('}#{$1}" }
       (END)
         @END
         0;JMP

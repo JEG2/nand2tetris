@@ -27,8 +27,8 @@ module VM
       [command, tokens]
     end
 
-    def write_to(runtime, options = { })
-      operations.write_to(runtime, command: name, params: options[:params])
+    def write_to(runtime, **options)
+      operations.write_to(runtime, options.merge(command: name))
     end
 
     private

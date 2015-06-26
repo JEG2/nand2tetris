@@ -6,13 +6,12 @@ module VM
     end
 
     attr_reader :params, :command
-    private     :params, :command
 
     def name
       command.name
     end
 
-    def write_to(runtime, options = { })
+    def write_to(runtime, **options)
       command.write_to(runtime, params: params)
     end
   end

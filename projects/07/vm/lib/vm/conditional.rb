@@ -7,7 +7,7 @@ module VM
     attr_reader :comparison
     private     :comparison
 
-    def write_to(runtime, options = { })
+    def write_to(runtime, **options)
       runtime.pop
       runtime.pop(expression: "M-D")
       runtime.jump(comparison: comparison)

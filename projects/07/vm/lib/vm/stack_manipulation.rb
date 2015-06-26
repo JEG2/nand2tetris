@@ -9,14 +9,8 @@ module VM
       "temp"     => "R5"
     }
 
-    def write_to(runtime, options = { })
+    def write_to(runtime, **options)
       case (segment = options[:params][:segment])
-      when "static"
-        dispatch_to(
-          "#{runtime.file}.#{options[:params][:index]}",
-          runtime,
-          options
-        )
       when "constant"
         if options[:command] == "push"
           runtime.load_data(number: options[:params][:index])
@@ -24,6 +18,12 @@ module VM
         else
           fail "Not supported:  pop constant"
         end
+      when "static"
+        dispatch_to(
+          "#{runtime.file}.#{options[:params][:index]}",
+          runtime,
+          options
+        )
       else
         if SEGMENT_POINTERS.include?(segment)
           if segment == "pointer" && options[:params][:index] !~ /\A[01]\z/

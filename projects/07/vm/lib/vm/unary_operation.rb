@@ -7,8 +7,8 @@ module VM
     attr_reader :operator
     private     :operator
 
-    def write_to(runtime, options = { })
-      runtime.pop(expression: "#{operator}D")
+    def write_to(runtime, **options)
+      runtime.pop(expression: "#{operator}M")
       runtime.push
     end
   end
