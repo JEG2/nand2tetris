@@ -1,35 +1,48 @@
 module VM
   class StackManipulation
+    SEGMENT_POINTERS = {
+      "argument" => "ARG",
+      "local"    => "LCL",
+      "this"     => "THIS",
+      "that"     => "THAT",
+      "pointer"  => "R3",
+      "temp"     => "R5"
+    }
+
     def write_to(runtime, options = { })
-      case options[:params][:segment]
-      when "argument"
-        dispatch_to(runtime, options[:command], "ARG", options[:params][:index])
-      when "local"
-        dispatch_to(runtime, options[:command], "LCL", options[:params][:index])
+      case (segment = options[:params][:segment])
       when "static"
-        dispatch_to(runtime, options[:command], "#{runtime.file}.#{options[:params][:index]}", 0)
+        dispatch_to(
+          "#{runtime.file}.#{options[:params][:index]}",
+          runtime,
+          options
+        )
       when "constant"
         if options[:command] == "push"
           runtime.load_data(number: options[:params][:index])
           runtime.push
         else
-          fail "pop constant not supported"
+          fail "Not supported:  pop constant"
         end
-      when "this"
-        dispatch_to(runtime, options[:command], "THIS", options[:params][:index])
-      when "that"
-        dispatch_to(runtime, options[:command], "THAT", options[:params][:index])
-      when "pointer"
-        dispatch_to(runtime, options[:command], "R3", options[:params][:index])
-      when "temp"
-        dispatch_to(runtime, options[:command], "R5", options[:params][:index])
+      else
+        if SEGMENT_POINTERS.include?(segment)
+          if segment == "pointer" && options[:params][:index] !~ /\A[01]\z/
+            fail "Not supported:  pointer index #{options[:params][:index]}"
+          end
+          dispatch_to(SEGMENT_POINTERS[segment], runtime, options)
+        else
+          fail "Unknown segment:  #{segment}"
+        end
       end
     end
 
     private
 
-    def dispatch_to(runtime, command, pointer, offset)
-      send("#{command}_to", runtime, pointer, offset, pointer.start_with?("R") || pointer.include?("."))
+    def dispatch_to(pointer, runtime, options)
+      command  = options[:command]
+      offset   = pointer.include?(".") ? 0 : options[:params][:index]
+      register = pointer.start_with?("R") || pointer.include?(".")
+      send("#{command}_to", runtime, pointer, offset, register)
     end
 
     def push_to(runtime, pointer, offset, register)
