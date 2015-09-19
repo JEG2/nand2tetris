@@ -13,7 +13,9 @@ projects/06/**/*.asm
 projects/07/StackArithmetic
 projects/07/MemoryAccess
 
-projects/08
+projects/08/FunctionCalls
+projects/08/ProgramFlow
+
 projects/09
 projects/10
 projects/11
