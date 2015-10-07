@@ -7,6 +7,7 @@ require_relative "labeler"
 require_relative "goto"
 require_relative "function_definition"
 require_relative "function_call"
+require_relative "function_return"
 
 module VM
   SEGMENTS = %w[argument local static constant this that pointer temp]
@@ -106,6 +107,10 @@ module VM
         arguments: /\A\d+\Z/,
       },
       operations: FunctionCall.new
+    ),
+    Command.new(
+      name: "return",
+      operations: FunctionReturn.new
     ),
     FailedParseCommand.new
   ]

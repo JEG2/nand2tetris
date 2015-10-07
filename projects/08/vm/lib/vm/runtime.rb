@@ -104,7 +104,7 @@ module VM
       END_HACK
     end
 
-    def call_function()
+    def call_function(function_name:, arguments:)
       @last_return += 1
       add_hack(<<-END_HACK)
       @return:#{@last_return}
@@ -114,7 +114,116 @@ module VM
       A=M-1
       M=D
 
+      @LCL
+      D=M
+      @SP
+      M=M+1
+      A=M-1
+      M=D
+
+      @ARG
+      D=M
+      @SP
+      M=M+1
+      A=M-1
+      M=D
+
+      @THIS
+      D=M
+      @SP
+      M=M+1
+      A=M-1
+      M=D
+
+      @THAT
+      D=M
+      @SP
+      M=M+1
+      A=M-1
+      M=D
+
+      @SP
+      D=M
+      @5
+      D=D-A
+      @#{arguments}
+      D=D-A
+      @ARG
+      M=D
+
+      @SP
+      D=M
+      @LCL
+      M=D
+
+      @#{generate_function_label(function_name)}
+      0;JMP
+
       (@return:#{@last_return})
+      END_HACK
+    end
+
+    def return_from_function
+      add_hack(<<-END_HACK)
+
+      @LCL
+      D=M
+      @RETURN_FRAME
+      M=D
+
+      @5
+      A=D-A
+      D=M
+      @RETURN_ADDRESS
+      M=D
+
+      @SP
+      M=M-1
+      A=M
+      D=M
+      @ARG
+      A=M
+      M=D
+
+      @ARG
+      D=A+1
+      @SP
+      M=D
+
+      @RETURN_FRAME
+      D=A
+      @1
+      A=D-A
+      D=M
+      @THAT
+      M=D
+
+      @RETURN_FRAME
+      D=A
+      @2
+      A=D-A
+      D=M
+      @THIS
+      M=D
+
+      @RETURN_FRAME
+      D=A
+      @3
+      A=D-A
+      D=M
+      @ARG
+      M=D
+
+      @RETURN_FRAME
+      D=A
+      @4
+      A=D-A
+      D=M
+      @LCL
+      M=D
+
+      @RETURN_ADDRESS
+      0;JMP
       END_HACK
     end
 
@@ -122,6 +231,10 @@ module VM
 
     def add_hack(new_lines)
       hack << new_lines
+    end
+
+    def generate_function_label(function_name)
+      function_name
     end
   end
 end
