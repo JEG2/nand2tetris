@@ -5,8 +5,9 @@ module VM
       runtime.create_label(options.fetch(:params).fetch(:function_name))
 
       local_count = options.fetch(:params).fetch(:locals)
-      local_count.times do
-        runtime.push(0, as: "A")
+      Integer(local_count).times do
+        runtime.load_data(number: 0)
+        runtime.push
       end
     end
 
