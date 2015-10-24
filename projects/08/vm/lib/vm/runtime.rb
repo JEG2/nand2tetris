@@ -104,7 +104,7 @@ module VM
       END_HACK
     end
 
-    def call_function(function_name:, arguments:)
+    def  call_function(function_name:, arguments:)
       @last_return += 1
       add_hack(<<-END_HACK)
       @return:#{@last_return}
@@ -159,7 +159,7 @@ module VM
       @#{generate_function_label(function_name)}
       0;JMP
 
-      (@return:#{@last_return})
+      (return:#{@last_return})
       END_HACK
     end
 
@@ -186,12 +186,12 @@ module VM
       M=D
 
       @ARG
-      D=A+1
+      D=M+1
       @SP
       M=D
 
       @RETURN_FRAME
-      D=A
+      D=M
       @1
       A=D-A
       D=M
@@ -199,7 +199,7 @@ module VM
       M=D
 
       @RETURN_FRAME
-      D=A
+      D=M
       @2
       A=D-A
       D=M
@@ -207,7 +207,7 @@ module VM
       M=D
 
       @RETURN_FRAME
-      D=A
+      D=M
       @3
       A=D-A
       D=M
@@ -215,7 +215,7 @@ module VM
       M=D
 
       @RETURN_FRAME
-      D=A
+      D=M
       @4
       A=D-A
       D=M
@@ -223,6 +223,7 @@ module VM
       M=D
 
       @RETURN_ADDRESS
+      A=M
       0;JMP
       END_HACK
     end
@@ -234,7 +235,7 @@ module VM
     end
 
     def generate_function_label(function_name)
-      function_name
+      "label:#{function_name}"
     end
   end
 end
