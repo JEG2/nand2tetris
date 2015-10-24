@@ -9,13 +9,7 @@ describe VM::Parser do
   end
 
   it "ignores comments" do
-    commands = VM::Parser.new("// full line\nNOT // partial line").parse
-    expect(commands.size).to       eq(1)
-    expect(commands.first.name).to eq("not")
-  end
-
-  it "ignores case" do
-    commands = VM::Parser.new("NOT").parse
+    commands = VM::Parser.new("// full line\nnot // partial line").parse
     expect(commands.size).to       eq(1)
     expect(commands.first.name).to eq("not")
   end

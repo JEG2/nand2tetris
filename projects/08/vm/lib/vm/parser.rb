@@ -10,7 +10,7 @@ module VM
     private     :vm_code
 
     def parse
-      tokens   = vm_code.gsub(%r{//.*}, "").downcase.scan(/\S+/)
+      tokens   = vm_code.gsub(%r{//.*}, "").scan(/\S+/)
       commands = [ ]
       until tokens.empty?
         COMMANDS.each do |command|
