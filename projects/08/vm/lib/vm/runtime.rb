@@ -1,10 +1,27 @@
 module VM
   class Runtime
-    def initialize(file)
+
+    def self.increment_last_conditional
+      @last_conditional = last_conditional
+      @last_conditional += 1
+    end
+
+    def self.increment_last_return
+      @last_return = last_return
+      @last_return += 1
+    end
+
+    def self.last_conditional
+      @last_conditional ||= 0
+    end
+
+    def self.last_return
+      @last_return ||= 0
+    end
+
+    def initialize(file = "FILE NOT SET")
       @file             = file
       @hack             = ""
-      @last_conditional = 0
-      @last_return      = 0
     end
 
     attr_reader :file
@@ -37,6 +54,13 @@ module VM
       END_HACK
     end
 
+    def update_pointer(name:)
+      add_hack(<<-END_HACK)
+      @#{name}
+      M=D
+      END_HACK
+    end
+
     def read(pointer: , offset: , register: )
       add_hack(<<-END_HACK)
       @#{offset}
@@ -66,16 +90,16 @@ module VM
     end
 
     def jump(comparison: )
-      @last_conditional += 1
+      self.class.increment_last_conditional
       add_hack(<<-END_HACK)
-      @CONDITIONAL_#{@last_conditional}:TRUE
+      @CONDITIONAL_#{self.class.last_conditional}:TRUE
       D;J#{comparison}
       D=0
-      @CONDITIONAL_#{@last_conditional}:FINISH
+      @CONDITIONAL_#{self.class.last_conditional}:FINISH
       0;JMP
-      (CONDITIONAL_#{@last_conditional}:TRUE)
+      (CONDITIONAL_#{self.class.last_conditional}:TRUE)
         D=-1
-      (CONDITIONAL_#{@last_conditional}:FINISH)
+      (CONDITIONAL_#{self.class.last_conditional}:FINISH)
         @SP
         M=M+1
         A=M-1
@@ -105,9 +129,9 @@ module VM
     end
 
     def  call_function(function_name:, arguments:)
-      @last_return += 1
+      self.class.increment_last_return
       add_hack(<<-END_HACK)
-      @return:#{@last_return}
+      @return:#{self.class.last_return}
       D=A
       @SP
       M=M+1
@@ -159,7 +183,7 @@ module VM
       @#{generate_function_label(function_name)}
       0;JMP
 
-      (return:#{@last_return})
+      (return:#{self.class.last_return})
       END_HACK
     end
 
