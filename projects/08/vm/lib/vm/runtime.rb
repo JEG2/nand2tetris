@@ -130,7 +130,7 @@ module VM
 
     def jump_to_label(condition, label)
       add_hack(<<-END_HACK)
-      @#{current_function_name}:#{label}
+      @#{current_function_name}$#{label}
       D;J#{condition}
       END_HACK
     end
