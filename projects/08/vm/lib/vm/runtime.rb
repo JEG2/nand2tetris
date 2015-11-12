@@ -25,6 +25,7 @@ module VM
     end
 
     attr_reader :file
+    attr_accessor :current_function_name
 
     attr_reader :hack
     private     :hack
@@ -113,6 +114,12 @@ module VM
       END_HACK
     end
 
+    def create_scoped_label(name)
+      add_hack(<<-END_HACK)
+      (#{current_function_name}$#{name})
+      END_HACK
+    end
+
     def to_s
       (hack + <<-END_HACK).gsub(/^\s+(\(?)/) { "#{'  ' if $1 != '('}#{$1}" }
       (END)
@@ -123,12 +130,12 @@ module VM
 
     def jump_to_label(condition, label)
       add_hack(<<-END_HACK)
-      @label:#{label}
+      @#{current_function_name}:#{label}
       D;J#{condition}
       END_HACK
     end
 
-    def  call_function(function_name:, arguments:)
+    def call_function(function_name:, arguments:)
       self.class.increment_last_return
       add_hack(<<-END_HACK)
       @return:#{self.class.last_return}

@@ -2,7 +2,9 @@ module VM
   class FunctionDefinition
 
     def write_to(runtime, options = { })
-      runtime.create_label(options.fetch(:params).fetch(:function_name))
+      function_name = options.fetch(:params).fetch(:function_name)
+      runtime.create_label(function_name)
+      runtime.current_function_name = function_name
 
       local_count = options.fetch(:params).fetch(:locals)
       Integer(local_count).times do
