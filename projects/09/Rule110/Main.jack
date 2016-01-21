@@ -1,0 +1,80 @@
+class Main {
+  function void drawRow(Array row, int y) {
+    var int i;
+    let i = 255;
+    while (i > ((255 - y) - 1)) {
+      if (row[i] = 1) {
+        do Screen.setColor(true);
+      } else {
+        do Screen.setColor(false);
+      }
+      do Screen.drawPixel(i + 128, y);
+      let i = i - 1;
+    }
+
+    return;
+  }
+
+  function void generateNextRow(
+    Array previousRow, 
+    Array currentRow, 
+    Rule rule, 
+    int y
+  ) {
+    var int i;
+    let i = 255;
+    while (i > ((255 - y) - 1)) {
+      let previousRow[i] = currentRow[i];
+      let i = i - 1;
+    }
+
+    if (y = 0) {
+      let currentRow[254] = rule.lookup(0, 0, previousRow[255]);
+      let currentRow[255] = rule.lookup(0, previousRow[255], 0);
+    } else {
+      let currentRow[(255 - y) - 1] =
+        rule.lookup(0, 0, previousRow[255 - y]);
+      let currentRow[255 - y] =
+        rule.lookup(0, previousRow[255 - y], previousRow[(255 - y) + 1]);
+      let i = (255 - y) + 1;
+      while (i < 255) {
+        let currentRow[i] = rule.lookup(
+          previousRow[i - 1],
+          previousRow[i],
+          previousRow[i + 1]
+        );
+        let i = i + 1;
+      }
+      let currentRow[255] = rule.lookup(previousRow[254], previousRow[255], 0);
+    }
+
+    return;
+  }
+
+  function void main() {
+    var Rule rule;
+    var Array previousRow, currentRow;
+    var int i;
+
+    let rule = Rule.new(0, 1, 1, 0, 1, 1, 1, 0);
+
+    let previousRow = Array.new(256);
+    let currentRow = Array.new(256);
+    let i = 0;
+    while (i < 256) {
+      let previousRow[i] = 0;
+      let currentRow[i] = 0;
+      let i = i + 1;
+    }
+    let currentRow[255] = 1;
+
+    let i = 0;
+    while (i < 256) {
+      do Main.drawRow(currentRow, i);
+      do Main.generateNextRow(previousRow, currentRow, rule, i);
+      let i = i + 1;
+    }
+
+    return;
+  }
+}

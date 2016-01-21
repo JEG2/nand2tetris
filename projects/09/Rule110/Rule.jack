@@ -1,0 +1,66 @@
+class Rule {
+  field int
+    pattern_111,
+    pattern_110,
+    pattern_101,
+    pattern_100,
+    pattern_011,
+    pattern_010,
+    pattern_001,
+    pattern_000;
+
+  constructor Rule new(
+    int p111,
+    int p110,
+    int p101,
+    int p100,
+    int p011,
+    int p010,
+    int p001,
+    int p000
+  ) {
+    let pattern_111 = p111;
+    let pattern_110 = p110;
+    let pattern_101 = p101;
+    let pattern_100 = p100;
+    let pattern_011 = p011;
+    let pattern_010 = p010;
+    let pattern_001 = p001;
+    let pattern_000 = p000;
+    return this;
+  }
+
+  method int lookup(int l, int m, int r) {
+    var int replacement;
+    if ((l = 1) & (m = 1) & (r = 1)) {
+      let replacement = pattern_111;
+    } else {
+      if ((l = 1) & (m = 1) & (r = 0)) {
+        let replacement = pattern_110;
+      } else {
+        if ((l = 1) & (m = 0) & (r = 1)) {
+          let replacement = pattern_101;
+        } else {
+          if ((l = 1) & (m = 0) & (r = 0)) {
+            let replacement = pattern_100;
+          } else {
+            if ((l = 0) & (m = 1) & (r = 1)) {
+              let replacement = pattern_011;
+            } else {
+              if ((l = 0) & (m = 1) & (r = 0)) {
+                let replacement = pattern_010;
+              } else {
+                if ((l = 0) & (m = 0) & (r = 1)) {
+                  let replacement = pattern_001;
+                } else {
+                  let replacement = pattern_000;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return replacement;
+  }
+}

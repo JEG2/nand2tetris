@@ -16,7 +16,10 @@ projects/07/MemoryAccess
 projects/08/FunctionCalls
 projects/08/ProgramFlow
 
-projects/09
+projects/09/**/*.pdf
+projects/09/**/*.vm
+projects/09/Square
+
 projects/10
 projects/11
 projects/12
